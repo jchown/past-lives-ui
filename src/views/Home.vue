@@ -54,6 +54,8 @@
         >
           <v-btn
             prepend-icon="$vuetify"
+            :disabled="!valid"
+            @click="OnSubmit"
           >Submit</v-btn>
         </v-col>
       </v-row>
@@ -85,6 +87,7 @@ export default {
     name: "",
     date_picked: undefined,
     dob: "",
+    dobDate: new Date(),
     nameRules: [
       (value: any) => {
         if (value) return true;
@@ -105,8 +108,21 @@ export default {
       this.dialog = false; 
       this.$nextTick(() => {
         if (this.date_picked != null)
-          this.dob = (this.date_picked as Date).toDateString();
+          this.dobDate = (this.date_picked as Date)
+          this.dob = this.dobDate.toDateString()
       });
+    },
+    OnSubmit() {
+        //  Convert date picked to UNIX epoch day
+
+        let unixTime = this.dobDate.getTime()
+        console.log("DOB in as UNIX timestamp: " + unixTime / 1000)
+        let dateTime = Math.round(unixTime / (24 * 60 * 60 * 1000))
+
+        this.$router.push({ name: 'Timeline', params: { 
+          name: this.name,
+          dob: dateTime
+        } })
     },
   },
 };
