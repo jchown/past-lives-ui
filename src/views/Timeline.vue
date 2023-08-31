@@ -17,7 +17,8 @@
   </v-timeline>
 </template>
 
-<script lang="ts">
+<script lang="js">
+
   import shared from "../shared"
 
   import deadPeople from "../assets/dead-people.json"
@@ -37,7 +38,7 @@
     mounted: function () {
 
       var dob = Number(this.$route.params['dob'])
-      var name = (this.$route.params['name']) as string
+      var name = (this.$route.params['name'])
 
       this.$data.items[0].date = shared.toDateString(dob)
       this.$data.items[0].text = name + " was born."
@@ -57,7 +58,7 @@
       })
     },
     methods: {
-      getNext: function(dod: string) {
+      getNext: function(dod) {
 
         while (true) {
           console.log("Finding who died on " + shared.toDateString(Number(dod)))
@@ -79,7 +80,7 @@
             
             var name = json.entities[id].labels.en.value
             var description = json.entities[id].description.en.value
-            var dob = next[0].born as Number
+            var dob = next[0].born
 
             var died = {
               id: this.$data.items.length,
