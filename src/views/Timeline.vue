@@ -58,7 +58,7 @@
 
   import shared from "../shared"
 
-  import deadPeople from "../assets/dead-people-min.json"
+  import deadPeople from "../assets/dead-people-max.json"
 
   export default {
     data: () => ({
@@ -117,7 +117,7 @@
       getNext: function(dod) {
 
         var next = undefined
-        for (var i = 0; i < 5 && next == undefined; ++i) {
+        for (var i = 0; i < 30 && next == undefined; ++i) {
 
           console.log("Finding who died on " + dod + " (" + shared.toDateString(Number(dod)) + ")")
 
@@ -131,6 +131,7 @@
             return
           }
     
+        console.log("Found " + next.length + " people who died on " + dod + " (" + shared.toDateString(Number(dod)) + ")")
         var id = next[0].id
 
         fetch("https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=" + id + "&origin=*",
