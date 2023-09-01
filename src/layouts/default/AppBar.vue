@@ -1,7 +1,7 @@
 <template>
   <v-app-bar flat>
     <v-app-bar-title>
-      <v-icon icon="mdi-circle-slice-4" />
+      <v-icon icon="mdi-calendar" />
       Past Lives
     </v-app-bar-title>
   </v-app-bar>
