@@ -1,13 +1,15 @@
 // Composables
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
   {
-    path: '/',
+    path: process.env.NODE_ENV === 'production'
+    ? '/history/past-lives/'
+    : '/',
     component: () => import('@/layouts/default/Default.vue'),
     children: [
       {
-        path: '',
+        path: '/',
         name: 'Home',
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
@@ -19,12 +21,22 @@ const routes = [
         name: 'Timeline',
         component: () => import('@/views/Timeline.vue'),
       },
+      {
+        path: '/test',
+        name: 'Test',
+        component: () => import('@/views/Test.vue'),
+      },
+      {
+        path: '/:pathMatch(.*)*', 
+        name: 'NotFound',
+        component: () => import('@/views/NotFound.vue'),
+      }
     ],
   },
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHashHistory(),
   routes,
 })
 
