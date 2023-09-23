@@ -1,15 +1,19 @@
 <template>
   <v-container>
     <v-timeline align="start" side="end" class="h-auto">
-      <v-timeline-item v-for="item in items" :key="item.id" :dot-color="item.dot_color" :icon="item.dot_icon"
-        :id="item.id" min-width="60%">
-
+      <v-timeline-item
+        v-for="item in items"
+        :key="item.id"
+        :dot-color="item.dot_color"
+        :icon="item.dot_icon"
+        :id="item.id"
+        min-width="60%"
+      >
         <template v-slot:opposite f-if="!item.fin">
           {{ item.date }}
         </template>
 
         <div v-if="item.died">
-
           <v-card>
             <div class="d-flex flex-no-wrap justify-space-between">
               <div>
@@ -22,7 +26,13 @@
                 </v-card-subtitle>
                 <v-card-text> Died aged {{ item.age }} </v-card-text>
                 <v-card-actions>
-                  <v-btn text color="primary" v-if="item.link != null" :href="item.link">{{ item.linkText }}</v-btn>
+                  <v-btn
+                    text
+                    color="primary"
+                    v-if="item.link != null"
+                    :href="item.link"
+                    >{{ item.linkText }}</v-btn
+                  >
                 </v-card-actions>
               </div>
               <div v-if="item.image != null">
@@ -32,7 +42,6 @@
               </div>
             </div>
           </v-card>
-
         </div>
 
         <div v-else>
@@ -44,7 +53,6 @@
             </div>
           </v-alert>
         </div>
-
       </v-timeline-item>
     </v-timeline>
   </v-container>
@@ -53,8 +61,6 @@
 <script lang="js">
 
 import shared from "../shared"
-
-import deadPeople from "../assets/dead-people-max.json"
 
 export default {
   data: () => ({
@@ -93,16 +99,7 @@ export default {
 
       this.$nextTick(() => {
 
-        var numDates = 0
-        var numPeople = 0
-        for (var date in deadPeople) {
-          ++numDates
-          numPeople += deadPeople[date].length
-        }
-
-        console.log(numDates + " dates of death for " + numPeople + " people.")
-
-        this.buildNext((dob - 0).toString(), Date.now() + 2000)
+        this.buildNext(name, (dob - 0).toString(), Date.now() + 2000)
       })
     },
     capitalise: function (item) {
@@ -122,38 +119,31 @@ export default {
 
       return item.name + died
     },
-    buildNext: function (dod, showTime, life = 0) {
+    buildNext: function (name, dod, showTime, life = 0) {
 
-      var choices = undefined
-      for (var i = 0; i < 30 && next == undefined; ++i) {
+    fetch("https://x7d98fqunc.execute-api.eu-west-2.amazonaws.com/production/",
+      {
+        method: "POST",
+        body: JSON.stringify({ "name": name, "dateOfBirth": dod }),
+      })
+      .then(response => response.json())
+      .then(choice => {
 
-        console.log("Finding who died on " + dod + " (" + shared.toDateString(Number(dod)) + ")")
-
-        choices = deadPeople[dod]
-        if (choices == undefined)
-          dod = (Number(dod) - 1).toString()
-      }
-
-      if (choices == undefined) {
-        var fin = {
-          fin: true,
-          color: 'light-grey',
-          dot_icon: 'mdi-calendar-question',
-          dot_color: 'grey',
-          description: "No more data available.",
+        if (choice.id === "") {
+          var fin = {
+            fin: true,
+            color: 'light-grey',
+            dot_icon: 'mdi-calendar-question',
+            dot_color: 'grey',
+            description: "No more data available.",
+          }
+          this.showItem(fin, showTime)
+          console.log("Nobody famous...")
+          return
         }
-        this.showItem(fin, showTime)
-        console.log("Nobody famous...")
-        return
-      }
 
-      console.log("Found " + choices.length + " people who died on " + dod + " (" + shared.toDateString(Number(dod)) + ")")
-
-      var rnd = shared.hashString(this.$route.params['name'] + life);
-      var next = choices[rnd % choices.length]
-
-      var id = next.id
-      var dob = next.born
+      var id = choice.id
+      var dob = choice.dateOfBirth
 
       fetch("https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=" + id + "&origin=*",
         { method: "GET" })
@@ -200,9 +190,10 @@ export default {
 
           dod = (dob - 1).toString()
 
-          this.buildNext(dod, showTime + 5000, life + 1)
+          this.buildNext(name, dod, showTime + 5000, life + 1)
         })
-    },
+      })
+      },
     showItem(item, showTime) {
       setTimeout(() => {
         this.$data.items.push(item)

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-col cols="12" md="4">
+    <v-col cols="12" md="8">
       <v-row class="pa-4">
         <div class="text-body">
           Many people in the world believe in reincarnation or that they have lived one or more past lives.
@@ -91,8 +91,8 @@
         <span class="text-subtitle-2">
           Credits:
         </span>
-        All data is derived from the open <a href="https://wikidata.org">Wikidata</a> project and their API is used
-        to render results.
+        Written by <a href="https://www.jasonchown.com">Jason Chown</a> using <a href="https://vuetifyjs.com">Vuetify</a>. Triskelion image <a href="https://en.wikipedia.org/wiki/Triskelion#/media/File:Triple-Spiral-Symbol.svg">from Wikipedia</a>.
+        All data is derived from the open <a href="https://wikidata.org">Wikidata</a> project (snapshot from 2023/09/06) and their API is used
       </div>
     </v-sheet>
   </v-footer>
