@@ -85,7 +85,7 @@
         <span class="text-subtitle-2">
           Privacy Policy:
         </span>
-        This app collects no user data and no analytics are kept.
+        This app collects no user data and no analytics are kept. Source code is available on <a href="https://github.com/jchown/past-lives-ui">Github</a>.
       </div>
       <div>
         <span class="text-subtitle-2">
