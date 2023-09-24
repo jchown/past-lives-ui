@@ -8,14 +8,13 @@
       </v-row>
       <v-row class="pa-4">
         <div class="text-body">
-          But who might they be? Let's imagine that as one person dies, another is born - so, if we know when you
-          were born, we can take a guess on who you might have been resurrected from based on who died at that time!
+          But who might they be? As we know when you were born, maybe we can take a guess on who you might have been resurrected from, based on who died just before (let's say within a week).
           We can even take it further and see who they were resurrected from, and so on, and so on...
         </div>
       </v-row>
       <v-row class="pa-4">
         <div class="text-body">
-          Want to see who died on your birthday? Enter your name and date of birth below to find out!
+          Want to see who died just before you were born, and who you may have been in a past life? Enter your name and date of birth below to find out!
         </div>
       </v-row>
     </v-col>
@@ -29,17 +28,17 @@
 
       <v-row>
         <v-col cols="12" md="4">
-          <v-text-field v-model="name" :rules="nameRules" :counter="10" label="Your Name" required
+          <v-text-field id="name" v-model="name" :rules="nameRules" :counter="10" label="Your Name" autocomplete="on" required
             hide-details></v-text-field>
           <span class="text-subtitle-2 font-weight-light">
-            Your name is used as a random number seed.
+            Your name is used as a random number seed. Use your full name as it was when you were born, so you get completely unique results.
           </span>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="12" md="4">
-          <v-text-field v-model="dob" :rules="dobRules" :counter="10" label="Date of Birth" required :readonly=true
+          <v-text-field id="date=of-birth" v-model="dob" :rules="dobRules" :counter="10" label="Date of Birth" required :readonly=true
           @click="OpenDatePicker('keyboard')"
             hide-details></v-text-field>
           <span class="text-subtitle-2 font-weight-light">
@@ -48,13 +47,13 @@
         </v-col>
 
         <v-col cols="4" md="4">
-          <v-btn @click="OpenDatePicker('calendar')">Pick Date</v-btn>
+          <v-btn @click="OpenDatePicker('calendar')" color="secondary">Pick Date</v-btn>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="12" md="4">
-          <v-btn prepend-icon="mdi-calendar-question" :disabled="!valid" @click="OnSubmit">Submit</v-btn>
+          <v-btn prepend-icon="mdi-calendar-question" :disabled="!valid" @click="OnSubmit" color="primary">Submit</v-btn>
         </v-col>
       </v-row>
 

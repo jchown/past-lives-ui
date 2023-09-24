@@ -14,7 +14,7 @@
         </template>
 
         <div v-if="item.died">
-          <v-card>
+          <v-card color="#40424F">
             <div class="d-flex flex-no-wrap justify-space-between">
               <div>
                 <v-card-title>
@@ -28,7 +28,7 @@
                 <v-card-actions>
                   <v-btn
                     text
-                    color="primary"
+                    color="#3281FF"
                     v-if="item.link != null"
                     :href="item.link"
                     >{{ item.linkText }}</v-btn
@@ -63,21 +63,27 @@
 import shared from "../shared"
 
 export default {
+
   data: () => ({
     items: [],
   }),
+
   created() {
     this.$watch(
       () => this.$route.params,
       (toParams, previousParams) => {
+        console.log("Watch: " + fromParams + " -> " + toParams)
         this.buildTimeline()
       }
     )
   },
+
   mounted: function () {
     this.buildTimeline()
   },
+
   methods: {
+
     buildTimeline: function () {
       this.items = [
         {
@@ -98,16 +104,17 @@ export default {
       this.$data.items[0].name = name
 
       this.$nextTick(() => {
-
         this.buildNext(name, (dob - 0).toString(), Date.now() + 2000)
       })
     },
+
     capitalise: function (item) {
       if (item == undefined)
         return undefined
 
       return item.charAt(0).toUpperCase() + item.slice(1)
     },
+
     summary: function (item) {
       if (!item.died)
         return item.name + " was born."
@@ -119,81 +126,85 @@ export default {
 
       return item.name + died
     },
+
     buildNext: function (name, dod, showTime, life = 0) {
 
-    fetch("https://x7d98fqunc.execute-api.eu-west-2.amazonaws.com/production/",
-      {
-        method: "POST",
-        body: JSON.stringify({ "name": name, "dateOfBirth": dod }),
-      })
-      .then(response => response.json())
-      .then(choice => {
-
-        if (choice.id === "") {
-          var fin = {
-            fin: true,
-            color: 'light-grey',
-            dot_icon: 'mdi-calendar-question',
-            dot_color: 'grey',
-            description: "No more data available.",
-          }
-          this.showItem(fin, showTime)
-          console.log("Nobody famous...")
-          return
-        }
-
-      var id = choice.id
-      var dob = choice.dateOfBirth
-
-      fetch("https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=" + id + "&origin=*",
-        { method: "GET" })
+      fetch("https://x7d98fqunc.execute-api.eu-west-2.amazonaws.com/production/",
+        {
+          method: "POST",
+          body: JSON.stringify({ "name": name, "dateOfBirth": dod }),
+        })
         .then(response => response.json())
-        .then(json => {
+        .then(choice => {
 
-          console.log(json);
-
-          var name = this.getValue(json.entities[id].labels)
-          var description = this.getValue(json.entities[id].descriptions)
-          var image = this.getImage(json.entities[id].claims)
-          var link = this.getSitePage(id, json.entities[id].sitelinks)
-
-          var died = {
-            died: true,
-            id: this.$data.items.length,
-            color: 'info',
-            dot_icon: 'mdi-calendar',
-            dot_color: 'grey',
-            icon: 'mdi-book-variant',
-            date: shared.toDateString(Number(dod)),
-            name: name,
-            description: description,
-            link: link,
-            linkText: link.indexOf("wikidata") > -1 ? "Wikidata" : "Wikipedia",
-            age: this.getAge(Number(dod) - Number(dob)),
-            image: image
+          if (choice.id === "") {
+            var fin = {
+              fin: true,
+              color: 'light-grey',
+              dot_icon: 'mdi-calendar-question',
+              dot_color: 'grey',
+              description: "No more data available.",
+            }
+            this.showItem(fin, showTime)
+            console.log("Nobody famous...")
+            return
           }
 
-          this.showItem(died, showTime)
+          console.log(choice);
 
-          var born = {
-            died: false,
-            id: this.$data.items.length,
-            color: 'info',
-            dot_icon: 'mdi-calendar',
-            dot_color: 'info',
-            icon: 'mdi-star',
-            date: shared.toDateString(dob),
-            name: name
-          }
+          dod = choice.dateOfDeath
+          var id = choice.id
+          var dob = choice.dateOfBirth
 
-          this.showItem(born, showTime + 100)
+          fetch("https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=" + id + "&origin=*",
+            { method: "GET" })
+            .then(response => response.json())
+            .then(json => {
 
-          dod = (dob - 1).toString()
+              console.log(json);
 
-          this.buildNext(name, dod, showTime + 5000, life + 1)
+              var name = this.getValue(json.entities[id].labels)
+              var description = this.getValue(json.entities[id].descriptions)
+              var image = this.getImage(json.entities[id].claims)
+              var link = this.getSitePage(id, json.entities[id].sitelinks)
+
+              var died = {
+                died: true,
+                id: this.$data.items.length,
+                color: 'info',
+                dot_icon: 'mdi-calendar',
+                dot_color: 'grey',
+                icon: 'mdi-book-variant',
+                date: shared.toDateString(Number(dod)),
+                name: name,
+                description: description,
+                link: link,
+                linkText: link.indexOf("wikidata") > -1 ? "Wikidata" : "Wikipedia",
+                age: this.getAge(Number(dod) - Number(dob)),
+                image: image
+              }
+
+              this.showItem(died, showTime)
+
+              var born = {
+                died: false,
+                id: this.$data.items.length,
+                color: 'info',
+                dot_icon: 'mdi-calendar',
+                dot_color: 'info',
+                icon: 'mdi-star',
+                date: shared.toDateString(dob),
+                name: name
+              }
+
+              this.showItem(born, showTime + 100)
+
+              dod = (dob - 1).toString()
+
+              this.buildNext(name, dod, showTime + 5000, life + 1)
         })
       })
-      },
+    },
     showItem(item, showTime) {
       setTimeout(() => {
         this.$data.items.push(item)
