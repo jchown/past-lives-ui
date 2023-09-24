@@ -1,35 +1,7 @@
-# Past Lives Vue UI
+# Past Lives UI
 
 Front end code to show "past lives".
 
-## Project setup
+Built using Yarn, Vue 3 and Vuetify.
 
-```
-# yarn
-yarn
-```
-
-### Compiles and hot-reloads for development
-
-```
-# yarn
-yarn dev
-```
-
-### Compiles and minifies for production
-
-```
-# yarn
-yarn build
-```
-
-### Lints and fixes files
-
-```
-# yarn
-yarn lint
-```
-
-### Customize configuration
-
-See [Configuration Reference](https://vitejs.dev/config/).
+Back end code at [https://github.com/jchown/past-lives-api](https://github.com/jchown/past-lives-api).
