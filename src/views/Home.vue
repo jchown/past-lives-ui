@@ -92,7 +92,7 @@
           Credits:
         </span>
         Written by <a href="https://www.jasonchown.com">Jason Chown</a> using <a href="https://vuetifyjs.com">Vuetify</a>. Triskelion image <a href="https://en.wikipedia.org/wiki/Triskelion#/media/File:Triple-Spiral-Symbol.svg">from Wikipedia</a>.
-        All data is derived from the open <a href="https://wikidata.org">Wikidata</a> project (snapshot from 2023/09/06) and their API is used
+        All data is derived from the open <a href="https://wikidata.org">Wikidata</a> project (snapshot from 2023/09/06) and their API is used to render the results.
       </div>
     </v-sheet>
   </v-footer>
