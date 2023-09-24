@@ -99,8 +99,6 @@
 </template>
 
 <script lang="ts">
-import { Console } from 'console';
-import { off } from 'process';
 
 export default {
   data: () => ({
@@ -127,14 +125,18 @@ export default {
       },
     ],
   }),
+
   mounted() {
     console.log("Home mounted")
   },
+
   methods: {
+
     OpenDatePicker(inputMode: ('keyboard' | 'calendar')) {
       this.pickerMode = inputMode
       this.picker = true
     },
+    
     OnDatePicked() {
       this.picker = false;
       this.$nextTick(() => {
@@ -144,6 +146,7 @@ export default {
         this.dob = this.dobDate.toDateString()
       });
     },
+
     OnSubmit() {
       //  Convert date picked to UNIX epoch day
 
