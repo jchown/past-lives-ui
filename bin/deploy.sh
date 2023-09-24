@@ -18,8 +18,7 @@ $aws s3 --region eu-west-2 sync dist/ s3://www.datasmelter.com/history/past-live
 
 echo "Invalidating CDN"
 
-$aws cloudfront create-invalidation --distribution-id E3LWUSSIKV8P0V --region eu-west-2 --paths /history/\*
-$($aws cloudfront create-invalidation --region eu-west-2 --distribution-id E3LWUSSIKV8P0V --paths /history/\* --region eu-west-2) >invalidation.json
+$aws cloudfront create-invalidation --region eu-west-2 --distribution-id E3LWUSSIKV8P0V --paths /history/\* --region eu-west-2 >invalidation.json
 invalidation_id=$($jq -f invalidation.json -r '.Invalidation.Id')
 
 echo "Waiting for invalidation $invalidation_id"
