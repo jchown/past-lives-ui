@@ -1,6 +1,8 @@
 #!/bin/bash
 
-$yarn="docker run --rm -t -v $(pwd)/:/usr/app/ -w /usr/app node:18-alpine yarn"
+set -e
+
+yarn="docker run --rm -t -v $(pwd)/:/usr/app/ -w /usr/app node:18-alpine yarn"
 
 $yarn install
 $yarn build
