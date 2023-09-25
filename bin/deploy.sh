@@ -15,7 +15,7 @@ $yarn build
 echo "Uploading site"
 
 $aws s3 --region eu-west-2 sync dist/ s3://www.datasmelter.com/history/past-lives/ --delete --acl public-read
-$aws s3 --region eu-west-2 cp static/* s3://www.datasmelter.com/history/past-lives/ --acl public-read
+$aws s3 --region eu-west-2 cp public/* s3://www.datasmelter.com/history/past-lives/ --acl public-read
 
 echo "Invalidating CDN"
 
