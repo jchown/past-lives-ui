@@ -72,8 +72,11 @@ export default {
     this.$watch(
       () => this.$route.params,
       (toParams, previousParams) => {
-        console.log("Watch: " + fromParams + " -> " + toParams)
-        this.buildTimeline()
+        
+        if (toParams.dob == undefined)  // Different route
+          return
+
+        this.buildTimeline()  // Respond to param changes
       }
     )
   },
