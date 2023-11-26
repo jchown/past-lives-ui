@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-col cols="12" md="8">
+    <v-col cols="12" md="10">
       <v-row class="pa-4">
         <div class="text-body">
           Many people in the world believe in reincarnation or that they have
@@ -23,84 +23,106 @@
           out!
         </div>
       </v-row>
+
+      <v-row>
+        <v-sheet elevation="2">
+          <v-form v-model="valid">
+            <v-container>
+              <v-row>
+                <v-col>
+                  <v-alert
+                    type="info"
+                    elevation="2"
+                    icon="mdi-information"
+                    class="text-body"
+                  >
+                    <span class="text-subtitle-2 font-weight-light"
+                      >This app is for entertainment purposes only. It is not
+                      intended to be taken seriously. Please do not use this
+                      app if you are easily offended.</span
+                    >
+                  </v-alert>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    id="name"
+                    v-model="name"
+                    :rules="nameRules"
+                    :counter="10"
+                    label="Your Name"
+                    autocomplete="on"
+                    required
+                    hide-details
+                  ></v-text-field>
+                  <span class="text-subtitle-2 font-weight-light">
+                    Your name is used as a random number seed. Use your full
+                    name as it was when you were born, so you get completely
+                    unique results.
+                  </span>
+                </v-col>
+              </v-row>
+
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    id="date=of-birth"
+                    v-model="dob"
+                    :rules="dobRules"
+                    :counter="10"
+                    label="Date of Birth"
+                    required
+                    :readonly="true"
+                    @click="OpenDatePicker('keyboard')"
+                    hide-details
+                  ></v-text-field>
+                  <span class="text-subtitle-2 font-weight-light">
+                    Your date of birthday is needed to calculate the past lives.
+                  </span>
+                </v-col>
+              </v-row>
+
+              <!-- v-expansion-panels variant="inset">
+                <v-expansion-panel elevation="0">
+                  <v-expansion-panel-title>Options</v-expansion-panel-title>
+                  <v-expansion-panel-text>
+                  <v-btn @click="OpenDatePicker('calendar')" color="secondary"
+                    >Pick Date</v-btn
+                  >
+                  </v-expansion-panel-text>
+                </v-expansion-panel>
+              </v-expansion-panels-->
+
+              <v-row>
+                <v-col cols="12" md="4">
+                  <v-btn
+                    prepend-icon="mdi-calendar-question"
+                    :disabled="!valid"
+                    @click="OnSubmit"
+                    color="primary"
+                    >Submit</v-btn
+                  >
+                </v-col>
+              </v-row>
+            </v-container>
+
+            <v-dialog v-model="picker" persistent>
+              <v-date-picker
+                v-model="date_picked"
+                class="elevation-1"
+                :input-mode="pickerMode"
+                input-placeholder="mm/dd/yyyy"
+                scrollable
+                @click:save="OnDatePicked"
+                @click:cancel="picker = false"
+              ></v-date-picker>
+            </v-dialog>
+          </v-form>
+        </v-sheet>
+      </v-row>
     </v-col>
   </v-container>
-
-  <v-divider></v-divider>
-
-  <v-form v-model="valid">
-    <v-container>
-      <v-row>
-        <v-col cols="12" md="4">
-          <v-text-field
-            id="name"
-            v-model="name"
-            :rules="nameRules"
-            :counter="10"
-            label="Your Name"
-            autocomplete="on"
-            required
-            hide-details
-          ></v-text-field>
-          <span class="text-subtitle-2 font-weight-light">
-            Your name is used as a random number seed. Use your full name as it
-            was when you were born, so you get completely unique results.
-          </span>
-        </v-col>
-      </v-row>
-
-      <v-row>
-        <v-col cols="12" md="4">
-          <v-text-field
-            id="date=of-birth"
-            v-model="dob"
-            :rules="dobRules"
-            :counter="10"
-            label="Date of Birth"
-            required
-            :readonly="true"
-            @click="OpenDatePicker('keyboard')"
-            hide-details
-          ></v-text-field>
-          <span class="text-subtitle-2 font-weight-light">
-            Your date of birthday is needed to calculate the past lives.
-          </span>
-        </v-col>
-
-        <v-col cols="4" md="4">
-          <v-btn @click="OpenDatePicker('calendar')" color="secondary"
-            >Pick Date</v-btn
-          >
-        </v-col>
-      </v-row>
-
-      <v-row>
-        <v-col cols="12" md="4">
-          <v-btn
-            prepend-icon="mdi-calendar-question"
-            :disabled="!valid"
-            @click="OnSubmit"
-            color="primary"
-            >Submit</v-btn
-          >
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-form>
-
-  <v-dialog v-model="picker" persistent>
-    <v-date-picker
-      v-model="date_picked"
-      class="elevation-1"
-      :input-mode="pickerMode"
-      input-placeholder="mm/dd/yyyy"
-      scrollable
-      @click:save="OnDatePicked"
-      @click:cancel="picker = false"
-    ></v-date-picker>
-  </v-dialog>
-
-  <v-divider />
 
   <v-overlay v-model="loading">
     <v-dialog :scrim="false" persistent width="auto" v-model="loading">
