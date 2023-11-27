@@ -30,22 +30,6 @@
             <v-container>
               <v-row>
                 <v-col>
-                  <v-alert
-                    type="info"
-                    elevation="2"
-                    icon="mdi-information"
-                    class="text-body"
-                  >
-                    <span class="text-subtitle-2 font-weight-light"
-                      >This app is for entertainment purposes only. It is not
-                      intended to be taken seriously. Please do not use this
-                      app if you are easily offended.</span
-                    >
-                  </v-alert>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
                   <v-text-field
                     id="name"
                     v-model="name"
@@ -139,14 +123,14 @@
   </v-overlay>
 
   <v-footer>
-    <v-sheet class="text-caption">
-      <div>
+    <v-sheet class="text-caption" >
+      <div class="pa-4">
         <span class="text-subtitle-2"> Privacy Policy: </span>
         This app collects no user data and no analytics are kept. Source code is
         available on
         <a href="https://github.com/jchown/past-lives-ui">Github</a>.
       </div>
-      <div>
+      <div class="px-4">
         <span class="text-subtitle-2"> Credits: </span>
         Written by <a href="https://www.jasonchown.com">Jason Chown</a> using
         <a href="https://vuetifyjs.com">Vuetify</a>. Triskelion image
