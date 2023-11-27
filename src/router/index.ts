@@ -14,7 +14,7 @@ const routes = [
         component: () => import('@/views/Home.vue'),
       },
       {
-        path: '/timeline/:name/:dob',
+        path: '/timeline/:name/:dob/:ensoulment',
         name: 'Timeline',
         component: () => import('@/views/Timeline.vue'),
       },

@@ -3,7 +3,7 @@
     <v-col cols="12" md="10">
       <v-row class="pa-4">
         <div class="text-body">
-          Many people in the world believe in reincarnation or that they have
+          Many people in the world believe in reincarnation or feel that they have
           lived one or more past lives.
         </div>
       </v-row>
@@ -200,10 +200,12 @@ export default {
     },
 
     OnSubmit() {
+      console.log("Ensoulment days before birth: " + this.ensoulmentDay);
+
       //  Convert date picked to UNIX epoch day
 
       let unixTime = this.dobDate.getTime();
-      console.log("DOB in as UNIX timestamp: " + unixTime / 1000);
+      console.log("DOB as UNIX timestamp: " + unixTime / 1000);
       let dateTime = Math.round(unixTime / (24 * 60 * 60 * 1000));
 
       this.loading = true;

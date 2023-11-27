@@ -9,7 +9,7 @@
         :id="item.id"
         min-width="60%"
       >
-        <template v-slot:opposite f-if="!item.fin">
+        <template v-slot:opposite v-if="!item.fin">
           {{ item.date }}
         </template>
 
@@ -104,6 +104,9 @@ export default {
       var name = (this.$route.params['name'])
       var ensoulment = (this.$route.params['ensoulment'])
 
+      if (ensoulment != 0 && ensoulment != 240 && ensoulment != 280)
+        throw "Invalid ensoulment: " + ensoulment
+
       this.$data.items[0].date = shared.toDateString(dob)
       this.$data.items[0].name = name
 
@@ -132,6 +135,8 @@ export default {
     },
 
     buildNext: function (name, dod, ensoulment, showTime, life = 0) {
+
+      console.log("Fetching for day " + dod + "/" + ensoulment)
 
       fetch("https://x7d98fqunc.execute-api.eu-west-2.amazonaws.com/production/",
         {
