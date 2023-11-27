@@ -102,12 +102,13 @@ export default {
       ]
       var dob = Number(this.$route.params['dob'])
       var name = (this.$route.params['name'])
+      var ensoulment = (this.$route.params['ensoulment'])
 
       this.$data.items[0].date = shared.toDateString(dob)
       this.$data.items[0].name = name
 
       this.$nextTick(() => {
-        this.buildNext(name, (dob - 0).toString(), Date.now() + 2000)
+        this.buildNext(name, (dob - 0).toString(), ensoulment, Date.now() + 2000)
       })
     },
 
@@ -130,12 +131,12 @@ export default {
       return item.name + died
     },
 
-    buildNext: function (name, dod, showTime, life = 0) {
+    buildNext: function (name, dod, ensoulment, showTime, life = 0) {
 
       fetch("https://x7d98fqunc.execute-api.eu-west-2.amazonaws.com/production/",
         {
           method: "POST",
-          body: JSON.stringify({ "name": name, "dateOfBirth": dod }),
+          body: JSON.stringify({ "name": name, "dateOfBirth": dod - ensoulment }),
         })
         .then(response => response.json())
         .then(choice => {
@@ -204,7 +205,7 @@ export default {
 
               dod = (dob - 1).toString()
 
-              this.buildNext(name, dod, showTime + 5000, life + 1)
+              this.buildNext(name, dod, ensoulment, showTime + 5000, life + 1)
         })
       })
     },

@@ -67,19 +67,17 @@
                 </v-col>
               </v-row>
 
-              <!-- v-expansion-panels variant="inset">
-                <v-expansion-panel elevation="0">
+              <v-expansion-panels variant="inset">
+                <v-expansion-panel elevation="0" >
                   <v-expansion-panel-title>Options</v-expansion-panel-title>
                   <v-expansion-panel-text>
-                  <v-btn @click="OpenDatePicker('calendar')" color="secondary"
-                    >Pick Date</v-btn
-                  >
+                    <v-select label="Ensoulment" density="compact" v-model="ensoulment" :items=ensoulmentOptions v-on:update:model-value="OnSetEnsoulment" />
                   </v-expansion-panel-text>
                 </v-expansion-panel>
-              </v-expansion-panels-->
+              </v-expansion-panels>
 
               <v-row>
-                <v-col cols="12" md="4">
+                <v-col cols="12" md="4" class="pt-8">
                   <v-btn
                     prepend-icon="mdi-calendar-question"
                     :disabled="!valid"
@@ -150,6 +148,10 @@ export default {
   data: () => ({
     picker: false,
     pickerMode: "calendar" as "keyboard" | "calendar",
+    ensoulment: 'Stoic (at birth)',
+    ensoulmentOptions: ['Stoic (at birth)', 'Aristotelian (40 days after conception)', 'Epicurean (at conception)'],
+    ensoulmentDays: [0, 240, 280],
+    ensoulmentDay: 0,
     loading: false,
     valid: false,
     name: "",
@@ -177,6 +179,11 @@ export default {
   },
 
   methods: {
+    OnSetEnsoulment() {
+      this.ensoulmentDay = this.ensoulmentDays[this.ensoulmentOptions.indexOf(this.ensoulment)];
+      console.log("Ensoulment set to: " + this.ensoulment + " (" + this.ensoulmentDay + " days)");
+    },
+
     OpenDatePicker(inputMode: "keyboard" | "calendar") {
       this.pickerMode = inputMode;
       this.picker = true;
@@ -208,6 +215,7 @@ export default {
         params: {
           name: this.name,
           dob: dateTime,
+          ensoulment: this.ensoulmentDay,
         },
       });
     },
