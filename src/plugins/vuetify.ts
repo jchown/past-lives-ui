@@ -9,22 +9,30 @@ import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 
 // Composables
-import { createVuetify } from 'vuetify'
+import { createVuetify, ThemeDefinition } from 'vuetify'
 import { VDatePicker } from 'vuetify/labs/VDatePicker'
 
-// https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
+const myCustomLightTheme: ThemeDefinition = {
+  dark: false,
+  colors: {
+  primary: "#795548",
+  secondary: "#ffc107",
+  accent: "#ff5722",
+  error: "#e91e63",
+  warning: "#ff9800",
+  info: "#00bcd4",
+  success: "#4caf50"
+  }
+};
+
 export default createVuetify({
   components: {
     VDatePicker,
   },
   theme: {
+    defaultTheme: 'myCustomLightTheme',
     themes: {
-      light: {
-        colors: {
-          primary: '#1867C0',
-          secondary: '#5CBBF6',
-        },
-      },
+      myCustomLightTheme
     },
   },
 })

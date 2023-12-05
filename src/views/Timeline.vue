@@ -9,8 +9,12 @@
         :id="item.id"
         min-width="60%"
       >
-        <template v-slot:opposite v-if="!item.fin">
+        <template v-slot:opposite v-if="!item.fin && !isMobile()">
           {{ item.date }}
+        </template>
+
+        <template v-if="!item.fin && isMobile()">
+            {{ item.date }}
         </template>
 
         <div v-if="item.died">
@@ -61,11 +65,14 @@
 <script lang="js">
 
 import shared from "../shared"
+import { useDisplay } from 'vuetify'
 
 export default {
 
   data: () => ({
     items: [],
+    ensoulment: "",
+    ensoulmentEvent: ""
   }),
 
   created() {
@@ -87,6 +94,10 @@ export default {
 
   methods: {
 
+    isMobile: function() {
+      return screen.width <= 760
+    }, 
+
     buildTimeline: function () {
       this.items = [
         {
@@ -102,16 +113,27 @@ export default {
       ]
       var dob = Number(this.$route.params['dob'])
       var name = (this.$route.params['name'])
-      var ensoulment = (this.$route.params['ensoulment'])
+      this.$data.ensoulment = parseInt(this.$route.params['ensoulment'])
 
-      if (ensoulment != 0 && ensoulment != 240 && ensoulment != 280)
-        throw "Invalid ensoulment: " + ensoulment
+      switch (this.$data.ensoulment) {
+        case 0:
+          this.$data.ensoulmentEvent = " was born."
+          break
+        case 240:
+          this.$data.ensoulmentEvent = " was ensouled."
+          break
+        case 280:
+          this.$data.ensoulmentEvent = " was conceived."
+          break
+        default:
+          throw "Invalid ensoulment: " + this.$data.ensoulment
+      }
 
       this.$data.items[0].date = shared.toDateString(dob)
       this.$data.items[0].name = name
 
       this.$nextTick(() => {
-        this.buildNext(name, (dob - 0).toString(), ensoulment, Date.now() + 2000)
+        this.buildNext(name, (dob - 0).toString(), Date.now() + 2000)
       })
     },
 
@@ -124,7 +146,7 @@ export default {
 
     summary: function (item) {
       if (!item.died)
-        return item.name + " was born."
+        return item.name + this.$data.ensoulmentEvent;
 
       var died = " died."
 
@@ -134,14 +156,14 @@ export default {
       return item.name + died
     },
 
-    buildNext: function (name, dod, ensoulment, showTime, life = 0) {
+    buildNext: function (name, dod, showTime, life = 0) {
 
-      console.log("Fetching for day " + dod + "/" + ensoulment)
+      console.log("Fetching for day " + dod + "/" + this.$data.ensoulment)
 
       fetch("https://x7d98fqunc.execute-api.eu-west-2.amazonaws.com/production/",
         {
           method: "POST",
-          body: JSON.stringify({ "name": name, "dateOfBirth": dod - ensoulment }),
+          body: JSON.stringify({ "name": name, "dateOfBirth": dod - this.$data.ensoulment }),
         })
         .then(response => response.json())
         .then(choice => {
@@ -210,7 +232,7 @@ export default {
 
               dod = (dob - 1).toString()
 
-              this.buildNext(name, dod, ensoulment, showTime + 5000, life + 1)
+              this.buildNext(name, dod, showTime + 5000, life + 1)
         })
       })
     },
