@@ -12,15 +12,15 @@ import 'vuetify/styles'
 import { createVuetify, ThemeDefinition } from 'vuetify'
 import { VDatePicker } from 'vuetify/labs/VDatePicker'
 
-const myCustomLightTheme: ThemeDefinition = {
+const customTheme: ThemeDefinition = {
   dark: false,
   colors: {
   primary: "#795548",
   secondary: "#ffc107",
-  accent: "#ff5722",
+  accent: "#393528",
   error: "#e91e63",
   warning: "#ff9800",
-  info: "#00bcd4",
+  info: "#795548",
   success: "#4caf50"
   }
 };
@@ -32,7 +32,7 @@ export default createVuetify({
   theme: {
     defaultTheme: 'myCustomLightTheme',
     themes: {
-      myCustomLightTheme
+      myCustomLightTheme: customTheme
     },
   },
 })

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-timeline align="start" side="end" class="h-auto">
+    <v-timeline align="start" side="end" class="h-auto" density="{{ timelineDensity() }}">
       <v-timeline-item
         v-for="item in items"
         :key="item.id"
@@ -8,27 +8,33 @@
         :icon="item.dot_icon"
         :id="item.id"
         min-width="60%"
+        elevation="3"
       >
         <template v-slot:opposite v-if="!item.fin && !isMobile()">
           {{ item.date }}
         </template>
 
         <template v-if="!item.fin && isMobile()">
-            {{ item.date }}
+          <div style="margin-bottom: 4px; font-size: small;">{{ item.date }}</div>
         </template>
 
         <div v-if="item.died">
-          <v-card color="#40424F">
-            <div class="d-flex flex-no-wrap justify-space-between">
-              <div>
-                <v-card-title>
+          <v-card color="accent" max-width="100%" elevation="8">
+                <v-card-title style="">
                   <v-icon left>{{ item.icon }}</v-icon>
                   {{ item.name }}
                 </v-card-title>
+            <div class="d-flex flex-no-wrap justify-space-between">
+              <div>
                 <v-card-subtitle max-width="60%">
                   {{ capitalise(item.description) }}
                 </v-card-subtitle>
                 <v-card-text> Died aged {{ item.age }} </v-card-text>
+              </div>
+              <div v-if="item.image != null">
+                <img :src="item.image" style="border-radius: 8px; height: 125px; margin: 20px;" />
+              </div>
+            </div>
                 <v-card-actions>
                   <v-btn
                     text
@@ -38,18 +44,11 @@
                     >{{ item.linkText }}</v-btn
                   >
                 </v-card-actions>
-              </div>
-              <div v-if="item.image != null">
-                <v-avatar class="ma-3" size="125" rounded="0">
-                  <v-img :src="item.image" />
-                </v-avatar>
-              </div>
-            </div>
           </v-card>
         </div>
 
         <div v-else>
-          <v-alert :value="true" :color="item.color" :icon="item.icon">
+          <v-alert :value="true" :color="item.color" :icon="item.icon" elevation="4">
             <span v-html="summary(item)" v-if="!item.fin" />
 
             <div>
@@ -97,6 +96,13 @@ export default {
     isMobile: function() {
       return screen.width <= 760
     }, 
+
+    timelineDensity: function() {
+      if (this.isMobile())
+        return "dense";
+      else
+        return "default";
+    },
 
     buildTimeline: function () {
       this.items = [
