@@ -128,7 +128,7 @@
         available on
         <a href="https://github.com/jchown/past-lives-ui">Github</a>. 
         
-        Crash reports may be sent to <a href="sentry.io">Sentry</a> for debugging purposes, in the event that you manage to break it.
+        Crash reports may be sent to <a href="https://sentry.io">Sentry</a> for debugging purposes, in the event that you manage to break it.
         In this case, your data may be collected by Sentry and processed under <a href="https://sentry.io/legal/dpa/">these terms</a>. Just don't break it, OK?
       </div>
       <div class="px-4">
