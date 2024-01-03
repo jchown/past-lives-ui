@@ -21,6 +21,7 @@ const customTheme: ThemeDefinition = {
   error: "#e91e63",
   warning: "#ff9800",
   info: "#795548",
+  info2: "#796568",
   success: "#4caf50"
   }
 };

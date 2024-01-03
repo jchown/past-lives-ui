@@ -1,6 +1,11 @@
 <template>
   <v-container>
-    <v-timeline align="start" side="end" class="h-auto" density="{{ timelineDensity() }}">
+    <v-timeline
+      align="start"
+      side="end"
+      class="h-auto"
+      density="{{ timelineDensity() }}"
+    >
       <v-timeline-item
         v-for="item in items"
         :key="item.id"
@@ -10,46 +15,61 @@
         min-width="60%"
         elevation="3"
       >
-        <template v-slot:opposite v-if="!item.fin && !isMobile()">
+        <template v-slot:opposite v-if="item.type != 'Fin' && !isMobile()">
           {{ item.date }}
         </template>
 
-        <template v-if="!item.fin && isMobile()">
-          <div style="margin-bottom: 4px; font-size: small;">{{ item.date }}</div>
+        <template v-if="item.type != 'Fin' && isMobile()">
+          <div style="margin-bottom: 4px; font-size: small">
+            {{ item.date }}
+          </div>
         </template>
 
-        <div v-if="item.died">
+        <div v-if="item.type == 'Died'">
           <v-card color="accent" max-width="100%" elevation="8">
-                <v-card-title style="">
-                  <v-icon left>{{ item.icon }}</v-icon>
-                  {{ item.name }}
-                </v-card-title>
+            <v-card-title style="">
+              <v-icon left>{{ item.icon }}</v-icon>
+              {{ item.name }}
+            </v-card-title>
             <div class="d-flex flex-no-wrap justify-space-between">
               <div>
                 <v-card-subtitle max-width="60%">
                   {{ capitalise(item.description) }}
                 </v-card-subtitle>
                 <v-card-text> Died aged {{ item.age }} </v-card-text>
+                <v-card-text v-if="item.extract != null">
+                  <span style="font-size: small; color: rgb(var(--v-theme-on-accent)) !important;">
+                    {{ item.extract }}
+                  </span>
+                </v-card-text>
               </div>
               <div v-if="item.image != null">
-                <img :src="item.image" style="border-radius: 8px; height: 125px; margin: 20px;" />
+                <img
+                  :src="item.image"
+                  style="border-radius: 8px; height: 125px; margin: 20px"
+                />
               </div>
             </div>
-                <v-card-actions>
-                  <v-btn
-                    text
-                    color="#3281FF"
-                    v-if="item.link != null"
-                    :href="item.link"
-                    >{{ item.linkText }}</v-btn
-                  >
-                </v-card-actions>
+            <v-card-actions>
+              <v-btn
+                text
+                color="#3281FF"
+                v-if="item.link != null"
+                :href="item.link"
+                >{{ item.linkText }}</v-btn
+              >
+            </v-card-actions>
           </v-card>
         </div>
 
         <div v-else>
-          <v-alert :value="true" :color="item.color" :icon="item.icon" elevation="4">
-            <span v-html="summary(item)" v-if="!item.fin" />
+          <v-alert
+            :value="true"
+            :color="item.color"
+            :icon="item.icon"
+            elevation="4"
+          >
+            <span v-html="summary(item)" v-if="item.type != 'Fin'" />
 
             <div>
               {{ capitalise(item.description) }}
@@ -64,14 +84,24 @@
 <script lang="js">
 
 import shared from "../shared"
-import { useDisplay } from 'vuetify'
+
+const EventType = {
+  Born: "Born",
+  Conceived: "Conceived",
+  Ensouled: "Ensouled",
+  Died: "Died",
+  Fin: "Fin"
+}
+
+const DELAY_NEXT_MS = 100
+const DELAY_BORN_MS = 10
+const DELAY_ENSOULMENT_MS = 2
 
 export default {
 
   data: () => ({
     items: [],
-    ensoulment: "",
-    ensoulmentEvent: ""
+    ensoulment: 0
   }),
 
   created() {
@@ -82,7 +112,8 @@ export default {
         if (toParams.dob == undefined)  // Different route
           return
 
-        this.buildTimeline()  // Respond to param changes
+        if (toParams !== previousParams)
+          this.buildTimeline()  // Respond to param changes
       }
     )
   },
@@ -105,42 +136,47 @@ export default {
     },
 
     buildTimeline: function () {
-      this.items = [
-        {
-          died: false,
-          id: 0,
-          dot_color: 'info',
-          dot_icon: 'mdi-calendar',
-          color: 'info',
-          icon: 'mdi-star',
-          date: '',
-          name: ''
-        },
-      ]
+
+      this.$data.ensoulment = parseInt(this.$route.params['ensoulment'])
+      this.items = []
+
       var dob = Number(this.$route.params['dob'])
       var name = (this.$route.params['name'])
-      this.$data.ensoulment = parseInt(this.$route.params['ensoulment'])
 
-      switch (this.$data.ensoulment) {
-        case 0:
-          this.$data.ensoulmentEvent = " was born."
-          break
-        case 240:
-          this.$data.ensoulmentEvent = " was ensouled."
-          break
-        case 280:
-          this.$data.ensoulmentEvent = " was conceived."
-          break
-        default:
-          throw "Invalid ensoulment: " + this.$data.ensoulment
-      }
+      console.log("Building timeline for " + name + " born " + dob + " ensoulment " + this.$data.ensoulment)
 
-      this.$data.items[0].date = shared.toDateString(dob)
-      this.$data.items[0].name = name
-
+      this.addBorn(name, dob, Date.now())
+    
       this.$nextTick(() => {
         this.buildNext(name, (dob - 0).toString(), Date.now() + 2000)
       })
+    },
+
+    addBorn: function(name, dob, showTime) {
+
+      this.showItem({
+            type: EventType.Born,
+            id: 0,
+            dot_color: 'info',
+            dot_icon: 'mdi-calendar',
+            color: 'info',
+            icon: 'mdi-star',
+            date: shared.toDateString(dob),
+            name: name
+      }, showTime)
+      
+      if (this.ensoulment != 0) {
+        this.showItem({
+            type: this.ensoulment == 240 ? EventType.Ensouled : EventType.Conceived,
+            id: 0,
+            dot_color: 'info2',
+            dot_icon: 'mdi-calendar-today',
+            color: 'info2',
+            icon: 'mdi-star-circle',
+            date: shared.toDateString(dob - this.ensoulment),
+            name: name
+        }, showTime + DELAY_ENSOULMENT_MS)
+      }
     },
 
     capitalise: function (item) {
@@ -151,15 +187,32 @@ export default {
     },
 
     summary: function (item) {
-      if (!item.died)
-        return item.name + this.$data.ensoulmentEvent;
 
-      var died = " died."
+      switch (item.type) {
+        case EventType.Born:
+          return item.name + " was born."
+        case EventType.Conceived:
+          return item.name + " was conceived."
+        case EventType.Ensouled:
+          return item.name + " was ensouled."
+        case EventType.Died:
+          if (item.link != null)
+            return "<a href='" + item.link + "'>" + item.name + "</a>" + died
+          return item.name + " died."
+        case EventType.Fin:
+          return "No more data available."
+      }
+    },
 
-      if (item.link != null)
-        return "<a href='" + item.link + "'>" + item.name + "</a>" + died
-
-      return item.name + died
+    showFin: function (showTime) {
+      var fin = {
+        type: "Fin",
+        color: 'light-grey',
+        dot_icon: 'mdi-calendar-question',
+        dot_color: 'grey',
+        description: "No more data available.",
+      }
+      this.showItem(fin, showTime)
     },
 
     buildNext: function (name, dod, showTime, life = 0) {
@@ -175,15 +228,8 @@ export default {
         .then(choice => {
 
           if (choice.id === "") {
-            var fin = {
-              fin: true,
-              color: 'light-grey',
-              dot_icon: 'mdi-calendar-question',
-              dot_color: 'grey',
-              description: "No more data available.",
-            }
-            this.showItem(fin, showTime)
             console.log("Nobody famous...")
+            this.showFin(showTime);
             return
           }
 
@@ -192,55 +238,58 @@ export default {
           dod = choice.dateOfDeath
           var id = choice.id
           var dob = choice.dateOfBirth
+          
+          fetch("https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=" + id + "&origin=*", { method: "GET" })
+            .then(response1 => response1.json())
+            .then(data => {
+              
+              var name = this.getValue(data.entities[id].labels)
+              var description = this.getValue(data.entities[id].descriptions)
+              var image = this.getImage(data.entities[id].claims)
+              var link = this.getSitePage(id, data.entities[id].sitelinks)
+              var pageName = link.substring(link.lastIndexOf('/') + 1)
 
-          fetch("https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=" + id + "&origin=*",
-            { method: "GET" })
-            .then(response => response.json())
-            .then(json => {
+              fetch("https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles=" + pageName + "&origin=*", { method: "GET" })
+                .then(response2 => response2.json())
+                .then(extractJson => {
 
-              console.log(json);
+                  console.log(extractJson)
 
-              var name = this.getValue(json.entities[id].labels)
-              var description = this.getValue(json.entities[id].descriptions)
-              var image = this.getImage(json.entities[id].claims)
-              var link = this.getSitePage(id, json.entities[id].sitelinks)
+                  var extract = null
+                  try {
+                    var pageId = Object.keys(extractJson.query.pages)[0]
+                    extract = extractJson.query.pages[pageId].extract
+                  }
+                  catch (error) {
+                  }
 
-              var died = {
-                died: true,
-                id: this.$data.items.length,
-                color: 'info',
-                dot_icon: 'mdi-calendar',
-                dot_color: 'grey',
-                icon: 'mdi-book-variant',
-                date: shared.toDateString(Number(dod)),
-                name: name,
-                description: description,
-                link: link,
-                linkText: link.indexOf("wikidata") > -1 ? "Wikidata" : "Wikipedia",
-                age: this.getAge(Number(dod) - Number(dob)),
-                image: image
-              }
+                  var died = {
+                    type: EventType.Died,
+                    id: this.$data.items.length,
+                    color: 'info',
+                    dot_icon: 'mdi-calendar-text',
+                    dot_color: 'grey',
+                    icon: 'mdi-book-variant',
+                    date: shared.toDateString(Number(dod)),
+                    name: name,
+                    description: description,
+                    extract: extract,
+                    link: link,
+                    linkText: link.indexOf("wikidata") > -1 ? "Wikidata" : "Wikipedia",
+                    age: this.getAge(Number(dod) - Number(dob)),
+                    image: image
+                  }
 
-              this.showItem(died, showTime)
+                  this.showItem(died, showTime)
 
-              var born = {
-                died: false,
-                id: this.$data.items.length,
-                color: 'info',
-                dot_icon: 'mdi-calendar',
-                dot_color: 'info',
-                icon: 'mdi-star',
-                date: shared.toDateString(dob),
-                name: name
-              }
+                  this.addBorn(name, dob, showTime + DELAY_BORN_MS)
 
-              this.showItem(born, showTime + 100)
+                  dod = (dob - 1).toString()
 
-              dod = (dob - 1).toString()
-
-              this.buildNext(name, dod, showTime + 5000, life + 1)
+                  this.buildNext(name, dod, showTime + DELAY_NEXT_MS, life + 1)
+                })
+              })
         })
-      })
     },
     showItem(item, showTime) {
       setTimeout(() => {
