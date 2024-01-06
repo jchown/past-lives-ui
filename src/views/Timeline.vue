@@ -4,7 +4,6 @@
       align="start"
       side="end"
       class="h-auto"
-      density="{{ timelineDensity() }}"
     >
       <v-timeline-item
         v-for="item in items"
@@ -38,9 +37,9 @@
                 </v-card-subtitle>
                 <v-card-text> Died aged {{ item.age }} </v-card-text>
                 <v-card-text v-if="item.extract != null">
-                  <span style="font-size: small; color: rgb(var(--v-theme-on-accent)) !important;">
-                    {{ item.extract }}
-                  </span>
+                  <div v-for="(text, index) in item.extract.split('\n')" :key="index" style="font-size: small; color: rgb(var(--v-theme-on-accent)) !important; margin-bottom: 12px;">
+                    {{ text }}
+                  </div>
                 </v-card-text>
               </div>
               <div v-if="item.image != null">
@@ -101,7 +100,8 @@ export default {
 
   data: () => ({
     items: [],
-    ensoulment: 0
+    ensoulment: 0,
+    famous: false
   }),
 
   created() {
@@ -138,12 +138,13 @@ export default {
     buildTimeline: function () {
 
       this.$data.ensoulment = parseInt(this.$route.params['ensoulment'])
+      this.$data.famous = parseInt(this.$route.params['famous']) == 1
       this.items = []
 
       var dob = Number(this.$route.params['dob'])
       var name = (this.$route.params['name'])
 
-      console.log("Building timeline for " + name + " born " + dob + " ensoulment " + this.$data.ensoulment)
+      console.log("Building timeline for " + name + ", born " + dob + ", ensoulment " + this.$data.ensoulment + " - prefer famous " + this.$data.famous)
 
       this.addBorn(name, dob, Date.now())
     
@@ -217,12 +218,10 @@ export default {
 
     buildNext: function (name, dod, showTime, life = 0) {
 
-      console.log("Fetching for day " + dod + "/" + this.$data.ensoulment)
-
       fetch("https://x7d98fqunc.execute-api.eu-west-2.amazonaws.com/production/",
         {
           method: "POST",
-          body: JSON.stringify({ "name": name, "dateOfBirth": dod - this.$data.ensoulment }),
+          body: JSON.stringify({ "name": name, "date": dod - this.$data.ensoulment, "famous": this.$data.famous }),
         })
         .then(response => response.json())
         .then(choice => {
@@ -252,8 +251,6 @@ export default {
               fetch("https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles=" + pageName + "&origin=*", { method: "GET" })
                 .then(response2 => response2.json())
                 .then(extractJson => {
-
-                  console.log(extractJson)
 
                   var extract = null
                   try {
