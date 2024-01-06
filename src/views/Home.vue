@@ -156,7 +156,7 @@ export default {
     ensoulmentOptions: ['Stoic (at birth)', 'Aristotelian (40 days after conception)', 'Epicurean (at conception)'],
     ensoulmentDays: [0, 240, 280],
     ensoulmentDay: 0,
-    famous: false,
+    famous: true,
     loading: false,
     valid: false,
     name: "",
