@@ -20,7 +20,9 @@ export default defineConfig({
       },
     }),
   ],
-  define: { 'process.env': {} },
+  define: { 'process.env': {
+    VUE_APP_VERSION: require('./package.json').version + ", built " + new Date().toLocaleString(), 
+  } },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
