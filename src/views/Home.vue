@@ -9,7 +9,7 @@
       </v-row>
       <v-row class="pa-4">
         <div class="text-body">
-          But who might they be? As we know when you were born, maybe we can
+          But who might they be? If we know when you were born, maybe we can
           take a guess on who you might have been resurrected from, based on who
           died just before (let's say within a week). We can even take it
           further and see who they were resurrected from, and so on, and so
@@ -50,20 +50,21 @@
 
               <v-row>
                 <v-col>
+                  <v-select label="Day" density="compact" v-model="day_of_birth" :items=days v-on:update:model-value="OnSetDOB" />
+                </v-col>
+                <v-col>
+                  <v-select label="Month" density="compact" v-model="month_of_birth" :items=months v-on:update:model-value="OnSetDOB"/>
+                </v-col>
+                <v-col>
                   <v-text-field
-                    id="date=of-birth"
-                    v-model="dob"
-                    :rules="dobRules"
-                    :counter="10"
-                    label="Date of Birth"
+                    density="compact" 
+                    id="year-of-birth"
+                    v-model="year_of_birth"
+                    :rules="yearRules"
+                    label="Year"
                     required
-                    :readonly="true"
-                    @click="OpenDatePicker('keyboard')"
-                    hide-details
+                    v-on:update:model-value="OnSetDOB"
                   ></v-text-field>
-                  <span class="text-subtitle-2 font-weight-light">
-                    Your date of birthday is needed to calculate the past lives.
-                  </span>
                 </v-col>
               </v-row>
 
@@ -88,19 +89,8 @@
                   >
                 </v-col>
               </v-row>
-            </v-container>
 
-            <v-dialog v-model="picker" persistent>
-              <v-date-picker
-                v-model="date_picked"
-                class="elevation-1"
-                :input-mode="pickerMode"
-                input-placeholder="mm/dd/yyyy"
-                scrollable
-                @click:save="OnDatePicked"
-                @click:cancel="picker = false"
-              ></v-date-picker>
-            </v-dialog>
+            </v-container>
           </v-form>
         </v-sheet>
       </v-row>
@@ -156,6 +146,8 @@ export default {
   data: () => ({
     picker: false,
     pickerMode: "calendar" as "keyboard" | "calendar",
+    days: Array.from({ length: 31 }, (_, i) => (i + 1).toString()),
+    months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     ensoulment: 'Stoic (at birth)',
     ensoulmentOptions: ['Stoic (at birth)', 'Aristotelian (40 days after conception)', 'Epicurean (at conception)'],
     ensoulmentDays: [0, 240, 280],
@@ -164,8 +156,9 @@ export default {
     loading: false,
     valid: false,
     name: "",
-    date_picked: undefined,
-    dob: "",
+    day_of_birth: "",
+    month_of_birth: "",
+    year_of_birth: "",
     dobDate: new Date(),
     nameRules: [
       (value: any) => {
@@ -174,11 +167,11 @@ export default {
         return "Please enter your name.";
       },
     ],
-    dobRules: [
+    yearRules: [
       (value: any) => {
         if (value) return true;
 
-        return "Please select your birth date.";
+        return "Please select your birth year.";
       },
     ],
   }),
@@ -199,19 +192,27 @@ export default {
       console.log("Ensoulment set to: " + this.ensoulment + " (" + this.ensoulmentDay + " days)");
     },
 
-    OpenDatePicker(inputMode: "keyboard" | "calendar") {
-      this.pickerMode = inputMode;
-      this.picker = true;
-    },
+    OnSetDOB() {
+      if (this.day_of_birth == "" || this.month_of_birth == "" || this.year_of_birth == "") {
+        this.valid = false;
+        return;
+      }
 
-    OnDatePicked() {
-      this.picker = false;
-      this.$nextTick(() => {
-        console.log("Date picked: " + this.date_picked);
+      console.log("DOB set to: " + this.day_of_birth + " " + this.month_of_birth + " " + this.year_of_birth);
 
-        if (this.date_picked != null) this.dobDate = this.date_picked as Date;
-        this.dob = this.dobDate.toDateString();
-      });
+      var yi = Number(this.year_of_birth);
+      var mi = this.months.indexOf(this.month_of_birth);
+      var di = Number(this.day_of_birth);
+
+      console.log("DOB as integers: " + yi + "/" + mi + "/" + di);
+
+      try {
+        this.dobDate = new Date(yi, mi, di);
+        console.log("Birth date set to: " + this.dobDate.toDateString());
+        this.valid = this.name != "";
+      } catch (e) {
+        this.valid = false;
+      }
     },
 
     OnSubmit() {
