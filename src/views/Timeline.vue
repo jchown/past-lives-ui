@@ -218,7 +218,7 @@ export default {
 
     buildNext: function (name, dod, showTime, life = 0) {
 
-      fetch("https://x7d98fqunc.execute-api.eu-west-2.amazonaws.com/production/",
+      fetch("https://past-lives-api.datasmelter.com",
         {
           method: "POST",
           body: JSON.stringify({ "name": name, "date": dod - this.$data.ensoulment, "famous": this.$data.famous }),

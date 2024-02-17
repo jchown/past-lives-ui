@@ -5,6 +5,7 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 // Utilities
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
+import dtFormat from 'intl-dateformatter'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -21,7 +22,7 @@ export default defineConfig({
     }),
   ],
   define: { 'process.env': {
-    VUE_APP_VERSION: require('./package.json').version + ", built " + new Date().toLocaleString(), 
+    VUE_APP_VERSION: require('./package.json').version + ", built " + dtFormat(new Date(), "yyyy/mm/dd hh:mmi:ss"), 
   } },
   resolve: {
     alias: {

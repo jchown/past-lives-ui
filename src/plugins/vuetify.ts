@@ -10,7 +10,6 @@ import 'vuetify/styles'
 
 // Composables
 import { createVuetify, ThemeDefinition } from 'vuetify'
-import { VDatePicker } from 'vuetify/labs/VDatePicker'
 
 const customTheme: ThemeDefinition = {
   dark: false,
@@ -28,7 +27,6 @@ const customTheme: ThemeDefinition = {
 
 export default createVuetify({
   components: {
-    VDatePicker,
   },
   theme: {
     defaultTheme: 'myCustomLightTheme',
